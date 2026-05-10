@@ -1,66 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-  /* Overlay to capture first click and unlock audio autoplay */
-  #unlock {
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Bois Wheelhouse Menu</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+
+  object#site {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* Fallback if object fails */
+  #fallback {
+    display: none;
+    width: 100%;
+    height: 100%;
+  }
+  object#site:not([data]) + #fallback,
+  object#site[data=""] + #fallback {
+    display: block;
+  }
+
+  /* Invisible YT player */
+  #yt-wrap {
     position: fixed;
-    inset: 0;
-    z-index: 9999;
-    cursor: pointer;
-    background: transparent;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    bottom: 0; right: 0;
+    z-index: -1;
   }
 </style>
 </head>
 <body>
 
-<!-- The website -->
+<object id="site" data="https://theboiswhenthewheelhouseturnson.my.canva.site/menu" type="text/html">
+  <embed src="https://theboiswhenthewheelhouseturnson.my.canva.site/menu" type="text/html" style="width:100%;height:100vh;border:none;" />
+</object>
 
-<!-- Invisible YouTube player div -->
-<div id="yt"></div>
-
-<!-- Invisible click-unlock overlay (removed after first interaction) -->
-<div id="unlock"></div>
+<div id="yt-wrap"><div id="yt"></div></div>
 
 <script>
-  var player;
+var player;
 
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('yt', {
-      videoId: 'dlATDrdpK0o',
-      playerVars: {
-        autoplay: 1,
-        loop: 1,
-        playlist: 'dlATDrdpK0o',
-        controls: 0,
-        mute: 0
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('yt', {
+    videoId: 'dlATDrdpK0o',
+    playerVars: {
+      autoplay: 1,
+      loop: 1,
+      playlist: 'dlATDrdpK0o',
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      modestbranding: 1
+    },
+    events: {
+      onReady: function(e) {
+        e.target.unMute();
+        e.target.setVolume(70);
+        e.target.playVideo();
       },
-      events: {
-        onReady: function(e) {
-          e.target.setVolume(70);
-          e.target.playVideo();
-        },
-        onStateChange: function(e) {
-          if (e.data === YT.PlayerState.ENDED) {
-            player.playVideo();
-          }
-        }
+      onStateChange: function(e) {
+        if (e.data === YT.PlayerState.ENDED) player.playVideo();
       }
-    });
-  }
+    }
+  });
+}
 
-  // Some browsers need a user gesture to play audio.
-  // The invisible overlay captures the first click anywhere on the page.
-  var unlock = document.getElementById('unlock');
-  unlock.addEventListener('click', function() {
-    if (player && player.playVideo) player.playVideo();
-    unlock.remove();
-  }, { once: true });
+// Attempt autoplay on any interaction if browser blocked it
+document.addEventListener('click', function() {
+  if (player && player.getPlayerState() !== 1) player.playVideo();
+}, { once: true });
 
-  // Load the YouTube IFrame API
-  var tag = document.createElement('script');
-  tag.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(tag);
+var tag = document.createElement('script');
+tag.src = 'https://www.youtube.com/iframe_api';
+document.head.appendChild(tag);
 </script>
 </body>
 </html>
