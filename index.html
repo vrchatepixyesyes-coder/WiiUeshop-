@@ -1,7 +1,25 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"/></head>
-<body style="margin:0;padding:0;background:transparent;">
-<iframe src="https://www.youtube.com/embed/dlATDrdpK0o?autoplay=1&loop=1&playlist=dlATDrdpK0o&controls=0&mute=0" width="1" height="1" frameborder="0" allow="autoplay"></iframe>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Music</title>
+</head>
+<body>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" autoplay loop>
+        <source src="https://raw.githubusercontent.com/vrchatepixyesyes-coder/WiiUeshop-/7b4196628d0dc1425c561a186b5d7e49ddf94c9f/23.%20May%202019%20(3DS%20%26%20Wii%20U).mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Helps autoplay work on more browsers
+        const music = document.getElementById("bgMusic");
+
+        document.addEventListener("click", () => {
+            music.play();
+        }, { once: true });
+    </script>
+
 </body>
 </html>
